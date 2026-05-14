@@ -88,6 +88,19 @@
           >Resources</a
         >
       </li>
+	  <li class="list-inline-item">
+        <a
+          class="d-none d-sm-block rounded"
+          i18n
+          mat-button
+          [class]="{
+            'font-weight-bold': currentRoute === 'forecast',
+            'text-decoration-underline': currentRoute === 'forecast'
+          }"
+          routerLink="/forecast"
+          >Forecast</a
+        >
+      </li>
       @if (
         hasPermissionForSubscription && user?.subscription?.type === 'Basic'
       ) {
@@ -266,6 +279,14 @@
             [routerLink]="routerLinkAccounts"
             >Accounts</a
           >
+		  <a
+			class="d-flex d-sm-none"
+			i18n
+			mat-menu-item
+			[class.font-weight-bold]="currentRoute === 'forecast'"
+			routerLink="/forecast"
+			>Forecast</a
+		  >
           <a
             i18n
             mat-menu-item

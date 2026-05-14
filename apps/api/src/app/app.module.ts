@@ -1,3 +1,4 @@
+import { ForecastModule } from './forecast/forecast.module';
 import { EventsModule } from '@ghostfolio/api/events/events.module';
 import { BullBoardAuthMiddleware } from '@ghostfolio/api/middlewares/bull-board-auth.middleware';
 import { HtmlTemplateMiddleware } from '@ghostfolio/api/middlewares/html-template.middleware';
@@ -116,6 +117,7 @@ import { UserModule } from './user/user.module';
     ExchangeRateModule,
     ExchangeRateDataModule,
     ExportModule,
+	ForecastModule,
     GhostfolioModule,
     HealthModule,
     ImportModule,

@@ -11,6 +11,9 @@ services:
       - no-new-privileges:true
     env_file:
       - ../.env
+    environment:
+      # Tell the Node API where to find the forecast service
+      - TIMESFM_SERVICE_URL=http://forecast:8001
     ports:
       - 3333:3333
     depends_on:
@@ -18,11 +21,33 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      forecast:
+        condition: service_healthy
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:3333/api/v1/health']
       interval: 10s
       timeout: 5s
       retries: 5
+
+  forecast:
+    build:
+      context: ../forecast-service   # path relative to docker-compose.yml
+      dockerfile: Dockerfile
+    container_name: gf-forecast
+    restart: unless-stopped
+    volumes:
+      # Cache the HuggingFace model so it's not re-downloaded on restart
+      - huggingface_cache:/root/.cache/huggingface
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - 8001:8001   # optional: expose for debugging, remove in production
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:8001/health || exit 1']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s   # ← increase from 120s to 180s
 
   postgres:
     image: docker.io/library/postgres:15-alpine
@@ -73,3 +98,4 @@ services:
 
 volumes:
   postgres:
+  huggingface_cache:   # ← ADD THIS to persist model downloads

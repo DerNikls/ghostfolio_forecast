@@ -1,3 +1,4 @@
+// apps/client/src/app/app.routes.ts
 import { internalRoutes, publicRoutes } from '@ghostfolio/common/routes/routes';
 
 import { Routes } from '@angular/router';
@@ -69,6 +70,17 @@ export const routes: Routes = [
     path: publicRoutes.features.path,
     title: publicRoutes.features.title
   },
+  // -------------------------
+  // ADD THIS FORECAST ROUTE:
+  // -------------------------
+  {
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./pages/forecast/forecast-page.routes').then((m) => m.routes),
+    path: 'forecast',
+    title: 'Forecast'
+  },
+  // -------------------------
   {
     path: internalRoutes.home.path,
     loadChildren: () =>
@@ -137,8 +149,6 @@ export const routes: Routes = [
       import('./pages/zen/zen-page.routes').then((m) => m.routes)
   },
   {
-    // wildcard, if requested url doesn't match any paths for routes defined
-    // earlier
     path: '**',
     redirectTo: 'home',
     pathMatch: 'full'
