@@ -1,7 +1,10 @@
 name: ghostfolio
 services:
   ghostfolio:
-    image: docker.io/ghostfolio/ghostfolio:latest
+    build:
+      context: ../../  # root of ~/ghostfolio_forecast
+      dockerfile: ../../Dockerfile  # adjust if your Dockerfile is elsewhere
+    # image: docker.io/ghostfolio/ghostfolio:latest  ← replaced by build
     container_name: ghostfolio
     restart: unless-stopped
     init: true
@@ -31,23 +34,22 @@ services:
 
   forecast:
     build:
-      context: ../forecast-service   # path relative to docker-compose.yml
+      context: ../forecast-service
       dockerfile: Dockerfile
     container_name: gf-forecast
     restart: unless-stopped
     volumes:
-      # Cache the HuggingFace model so it's not re-downloaded on restart
       - huggingface_cache:/root/.cache/huggingface
     environment:
       - PYTHONUNBUFFERED=1
     ports:
-      - 8001:8001   # optional: expose for debugging, remove in production
+      - 8001:8001
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:8001/health || exit 1']
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 180s   # ← increase from 120s to 180s
+      start_period: 180s
 
   postgres:
     image: docker.io/library/postgres:15-alpine
@@ -98,4 +100,4 @@ services:
 
 volumes:
   postgres:
-  huggingface_cache:   # ← ADD THIS to persist model downloads
+  huggingface_cache:
